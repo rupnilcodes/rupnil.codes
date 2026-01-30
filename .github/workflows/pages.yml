@@ -1,6 +1,6 @@
 name: Deploy to github pages
 
-runs-on:
+on:
   push:
     branches:
       - main
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   deploy:
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
