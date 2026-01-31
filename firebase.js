@@ -7,7 +7,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 // Your web app's Firebase configuration
@@ -59,6 +62,22 @@ export function signOutUser() {
  */
 export function onAuthState(cb) {
   return onAuthStateChanged(auth, cb);
+}
+
+/**
+ * Sign in with Google (popup)
+ */
+export function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
+  return signInWithPopup(auth, provider);
+}
+
+/**
+ * Sign in with GitHub (popup)
+ */
+export function signInWithGithub() {
+  const provider = new GithubAuthProvider();
+  return signInWithPopup(auth, provider);
 }
 
 export { auth };

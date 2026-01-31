@@ -10,27 +10,47 @@
   <div id="site-header"></div>
   <script type="module" src="/script.js"></script>
   
-  <main class="container auth-container">
-    <h1>Create account</h1>
-    <form id="signup-form" class="auth-form">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" required>
+  <div class="container">
+    <div class="auth-wrapper">
+      <aside class="oauth-card auth-container oauth-column" aria-label="Sign up options">
+        <h2 class="oauth-card__title">Quick sign-up</h2>
+        <div class="oauth-buttons">
+          <button id="google-btn" type="button" class="oauth-btn" aria-label="Sign up with Google">
+            <span class="oauth-icon"><img src="/assets/google.svg" alt="Google logo"/></span>
+          </button>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" required minlength="6">
+          <button id="github-btn" type="button" class="oauth-btn" aria-label="Sign up with GitHub">
+            <span class="oauth-icon"><img src="/assets/github.svg" alt="GitHub logo"/></span>
+          </button>
+        </div>
+      </aside>
 
-      <button type="submit">Sign up</button>
-      <p id="error" class="error" role="alert" aria-live="polite"></p>
-    </form>
+      <main class="auth-card auth-container">
+        <h1>Sign-up</h1>
 
-    <p>Already have an account? <a href="/account/login.html">Sign in</a></p>
-  </main>
+        <form id="signup-form" class="auth-form">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required>
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required minlength="6">
+
+          <button type="submit">Sign up</button>
+          <p id="error" class="error" role="alert" aria-live="polite"></p>
+        </form>
+
+        <p>Already have an account? <br> <a href="/account/login.html">Sign in</a></p>
+      </main>
+    </div>
+  </div>
 
   <script type="module">
-    import { signUp, onAuthState } from '/firebase.js';
+    import { signUp, onAuthState, signInWithGoogle, signInWithGithub } from '/firebase.js';
 
     const form = document.getElementById('signup-form');
     const err = document.getElementById('error');
+    const googleBtn = document.getElementById('google-btn');
+    const githubBtn = document.getElementById('github-btn');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -40,9 +60,29 @@
 
       try {
         await signUp(email, password);
-        window.location.href = '/';
+        window.location.href = '/account/dashboard.html';
       } catch (error) {
         err.textContent = error.message;
+      }
+    });
+
+    googleBtn.addEventListener('click', async () => {
+      err.textContent = '';
+      try {
+        await signInWithGoogle();
+        window.location.href = '/account/dashboard.html';
+      } catch (error) {
+        err.textContent = error.message || 'Google sign-in failed.';
+      }
+    });
+
+    githubBtn.addEventListener('click', async () => {
+      err.textContent = '';
+      try {
+        await signInWithGithub();
+        window.location.href = '/account/dashboard.html';
+      } catch (error) {
+        err.textContent = error.message || 'GitHub sign-in failed.';
       }
     });
 
