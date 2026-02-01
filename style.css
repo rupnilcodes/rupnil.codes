@@ -58,7 +58,7 @@ nav { display: flex; align-items: center; justify-content: space-between; }
 .hero h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: 1.1px; }
 .hero p { font-size: 1.25rem; margin-bottom: 2rem; color: var(--color-primary-hover); }
 
-.btn { background-color: var(--color-primary); color: white; padding: 0.85rem 2.5rem; font-weight: 700; font-size: 1rem; border-radius: 30px; cursor: pointer; user-select: none; text-decoration: none; display: inline-block; box-shadow: 0 6px 8px rgba(123, 92, 255, 0.4); }
+.btn { background-color: var(--color-primary); color: white; padding: 0.85rem 2.5rem; font-weight: 700; font-size: 1rem; border-radius: 30px; cursor: pointer; user-select: none; text-decoration: none; display: inline-block; }
 .section { padding: 3rem 1rem; text-align: center; }
 .section h2 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: 1.1px; }
 .section p { max-width: 600px; margin: 0 auto; color: var(--color-primary-hover); font-weight: 500; font-size: 1.1rem; }
@@ -100,9 +100,8 @@ li:before {
 .section-right h2 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: 1.1px; } 
 .section-right p { max-width: 1000px; margin: 0 auto; color: var(--color-primary-hover); font-weight: 500; font-size: 1.1rem; }
 .cards { display: flex; gap: 1.8rem; justify-content: center; margin-top: 2rem; }
-.card { background: #222; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border-radius: 12px; padding: 1.8rem; min-width: 280px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default; }
+.card { background: #222; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border-radius: 12px; padding: 1.8rem; min-width: 280px; max-width: 300; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default; }
 .card:hover { transform: translateY(-8px); box-shadow: 0 14px 30px rgba(0,0,0,0.3); }
-.card h3 { margin-bottom: 0.8rem; color: var(--color-primary); }
 .card p { font-weight: 400; color: var(--color-text-light); }
 footer { background: #111; color: #bbb; text-align: center; padding: 1.5rem 1rem; font-size: 0.9rem; user-select: none; }
 .footer-content { display: flex; justify-content: space-between; align-items: center; max-width: 960px; margin: 0 auto; flex-wrap: wrap; gap: 1rem; }

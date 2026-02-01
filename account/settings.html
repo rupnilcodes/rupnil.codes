@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rupnil.Codes — Settings</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <script type="module" src="/script.js"></script>
+
+  <main class="section">
+    <h1>Account Settings</h1>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Profile</h3>
+        <p>Email: <strong id="user-email">—</strong></p>
+        <p>Display name: <strong id="user-displayname">—</strong></p>
+
+        <form id="settings-form" style="display:none;">
+          <label for="display-name">Display name</label>
+          <input id="display-name" name="display-name" type="text" placeholder="Your display name">
+          <br>
+          <label for="email-input">Email</label>
+          <input id="email-input" name="email" type="email" placeholder="you@example.com">
+          <br>
+          <label for="new-password">New password</label>
+          <input id="new-password" name="new-password" type="password" placeholder="Enter new password (min 6)">
+          <br>
+          <label for="confirm-password">Confirm new password</label>
+          <input id="confirm-password" name="confirm-password" type="password" placeholder="Confirm new password">
+
+          <div>
+            <button type="button" id="save-settings-btn" class="btn">Save</button>
+            <button type="button" id="cancel-settings-btn" class="btn">Cancel</button>
+          </div>
+
+          <p id="settings-msg" class="sr-only" role="status" aria-live="polite"></p>
+          <p class="small">Note: Changing email or password may require you to sign in again.</p>
+        </form>
+
+        <p><a href="dashboard.html">Back to dashboard</a></p>
+        <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
+          <button id="edit-settings-btn" class="btn" type="button">Edit</button>
+          <button id="signout-btn" class="btn" type="button">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { onAuthState, signOutUser, auth } from '/firebase.js';
+    import { updateProfile, updateEmail, updatePassword } from 'https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js';
+
+    const emailEl = document.getElementById('user-email');
+    const displayNameEl = document.getElementById('user-displayname');
+
+    const displayNameInput = document.getElementById('display-name');
+    const emailInput = document.getElementById('email-input');
+    const newPasswordInput = document.getElementById('new-password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+
+    const settingsForm = document.getElementById('settings-form');
+    const editBtn = document.getElementById('edit-settings-btn');
+    const saveBtn = document.getElementById('save-settings-btn');
+    const cancelBtn = document.getElementById('cancel-settings-btn');
+    const settingsMsg = document.getElementById('settings-msg');
+    const signoutBtn = document.getElementById('signout-btn');
+
+    onAuthState((user) => {
+      if (!user) {
+        window.location.href = '/account/login.html';
+      } else {
+        emailEl.textContent = user.email || 'User';
+        displayNameEl.textContent = user.displayName || '—';
+        displayNameInput.value = user.displayName || '';
+        emailInput.value = user.email || '';
+      }
+    });
+
+    function enterEditMode() {
+      settingsMsg.textContent = '';
+      settingsMsg.classList.add('sr-only');
+      displayNameInput.value = displayNameEl.textContent === '—' ? '' : displayNameEl.textContent;
+      emailInput.value = emailEl.textContent === '—' ? '' : emailEl.textContent;
+      newPasswordInput.value = '';
+      confirmPasswordInput.value = '';
+      settingsForm.style.display = 'block';
+
+      const dispP = displayNameEl.parentElement;
+      if (dispP) dispP.style.display = 'none';
+      const emailP = emailEl.parentElement;
+      if (emailP) emailP.style.display = 'none';
+      editBtn.style.display = 'none';
+      if (saveBtn) saveBtn.disabled = false;
+      displayNameInput.focus();
+    }
+
+    function exitEditMode(reset = false) {
+      settingsForm.style.display = 'none';
+      const dispP = displayNameEl.parentElement;
+      if (dispP) dispP.style.display = '';
+      const emailP = emailEl.parentElement;
+      if (emailP) emailP.style.display = '';
+      editBtn.style.display = '';
+      if (reset) {
+        displayNameInput.value = displayNameEl.textContent === '—' ? '' : displayNameEl.textContent;
+        emailInput.value = emailEl.textContent === '—' ? '' : emailEl.textContent;
+      }
+      if (editBtn) editBtn.focus();
+    }
+
+    if (editBtn) editBtn.addEventListener('click', enterEditMode);
+    if (cancelBtn) cancelBtn.addEventListener('click', () => exitEditMode(true));
+
+    if (saveBtn) saveBtn.addEventListener('click', async () => {
+      settingsMsg.textContent = '';
+      settingsMsg.classList.add('sr-only');
+
+      const newDisplayName = displayNameInput.value.trim();
+      const newEmail = emailInput.value.trim();
+      const newPassword = newPasswordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (newPassword && newPassword.length < 6) {
+        settingsMsg.textContent = 'Password must be at least 6 characters.';
+        settingsMsg.classList.remove('sr-only');
+        return;
+      }
+      if (newPassword && newPassword !== confirmPassword) {
+        settingsMsg.textContent = 'Passwords do not match.';
+        settingsMsg.classList.remove('sr-only');
+        return;
+      }
+
+      const ops = [];
+      if (newDisplayName && newDisplayName !== displayNameEl.textContent) {
+        ops.push(updateProfile(auth.currentUser, { displayName: newDisplayName }));
+      }
+      if (newEmail && newEmail !== emailEl.textContent) {
+        ops.push(updateEmail(auth.currentUser, newEmail));
+      }
+      if (newPassword) {
+        ops.push(updatePassword(auth.currentUser, newPassword));
+      }
+
+      if (ops.length === 0) {
+        settingsMsg.textContent = 'No changes to save.';
+        settingsMsg.classList.remove('sr-only');
+        exitEditMode(true);
+        return;
+      }
+
+      saveBtn.disabled = true;
+      try {
+        await Promise.all(ops);
+
+        displayNameEl.textContent = newDisplayName || '—';
+        emailEl.textContent = newEmail || '—';
+        settingsMsg.textContent = 'Settings updated.';
+        settingsMsg.classList.remove('sr-only');
+        exitEditMode(false);
+      } catch (err) {
+        settingsMsg.textContent = 'Update failed: ' + (err.message || err);
+        settingsMsg.classList.remove('sr-only');
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    signoutBtn.addEventListener('click', async () => {
+      try {
+        await signOutUser();
+        window.location.href = '/';
+      } catch (err) {
+        alert('Sign out failed: ' + (err.message || err));
+      }
+    });
+  </script>
+
+  <div id="site-footer"></div>
+</body>
+</html>
