@@ -24,7 +24,7 @@
     <div id="docs-results" style="margin-top:1.25rem;"></div>
 
     <h2 style="margin-top:2rem;">All Docs</h2>
-    <ul id="docs-list" style="list-style:none;padding:0;margin:0;">
+    <ul id="docs-list">
     </ul>
   </section>
 
@@ -116,7 +116,7 @@
       function renderList(items){
         list.innerHTML = items.map(d=>{
           return `<li style="padding:.75rem 0;border-bottom:1px solid #eee; display:flex;justify-content:space-between;align-items:center;">
-            <div>
+            <div style="text-align:left;flex:1;">
               <div style="font-weight:600;color:#1a73e8;">${d.title}</div>
               <div style="color:#555;font-size:.95rem;">${d.description}</div>
             </div>
