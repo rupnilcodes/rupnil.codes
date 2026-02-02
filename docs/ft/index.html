@@ -151,8 +151,8 @@
         if(items.length === 0){ results.innerHTML = '<div style="color:#d00;">No results</div>'; return; }
         results.innerHTML = items.map(d=>{
           const title = highlight(q, d.title);
-          const desc = highlight(q, d.description);
-          const contentHTML = q ? highlight(q, d.content) : d.content;
+          const desc = d.description;
+          const contentHTML = d.content;
           return `<article style="padding:1rem;border:1px solid #eee;border-radius:8px;margin-bottom:1rem;">
             <h2 style="margin-top:0;">${title}</h2>
             <div style="color:#555;margin-bottom:.5rem;">${desc}</div>
@@ -167,7 +167,7 @@
         q = (q||'').trim().toLowerCase();
         if(!q) return [];
         return docs.filter(d=>{
-          return normalize(d.title).includes(q) || normalize(d.description).includes(q) || normalize(d.content).includes(q) || (d.id && d.id.includes(q));
+          return normalize(d.title).includes(q) || (d.id && d.id.includes(q));
         });
       }
 
